@@ -189,7 +189,7 @@
           <p>2018 - 2021</p>
         </div>
         <div class="education-card">
-          <img src="SCiUS KU.png" alt="Education 3">
+          <img src="KUSK.png" alt="Education 3">
           <h3>Senior High School</h3>
           <p>Kasetsart University Laboratory School, Kamphaeng Saen Campus, Educational Research and Development Center (SCiUS KU)</p>
           <p>2021 - 2024</p>
@@ -205,11 +205,36 @@
 
     <section class="contact" id="contact">
       <h2 class="heading">Contact Me</h2>
-        <div class="contact-container"></div>
+        <div class="contact-container">
           <div class="contact-info">
-            <i class="bx bx-mail-send icon-large" id="envelope-icon"></i>
-            <span class="email-text" id="email"> wisit.p.2005@gmail.com</span>
-            <button class="copy-btn" onclick="copyToClipboard()">Copy to clipboard</button>
+            <div class="contact-item">
+              <i class="bx bxl-gmail"></i>
+              <p>University Email</p>
+              <span>
+                <a href="mailto:wisit.suwan@mail.kmutt.ac.th">wisit.suwan@mail.kmutt.ac.th</a>
+              </span>
+            </div>
+            <div class="contact-item">
+                <i class="bx bxl-gmail"></i>
+              <p>Personal Email</p>
+              <span>
+                <a href="mailto:wisit.p.2005@gmail.com">wisit.p.2005@gmail.com</a>
+              </span>
+            </div>
+            <div class="contact-item">
+              <i class="bx bxl-github"></i>
+              <p>Github</p>
+              <span>
+                <a href="https://github.com/palapluem" target="_blank" rel="noopener noreferrer">palapluem</a>
+              </span>
+            </div>
+          </div>
+          <div class="contact-form">
+            <input type="text" id="name" placeholder="Your Name">
+            <input type="email" id="email" placeholder="Your Email">
+            <textarea id="message" class="ms" placeholder="Your Message"></textarea>
+            <button onclick="sendEmail()">Send Message</button>
+          </div>
         </div>
       </div>
     </section>
