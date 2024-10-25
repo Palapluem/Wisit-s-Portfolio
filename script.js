@@ -15,7 +15,7 @@ const typed = new Typed('.home-content h3 span', {
   });
   
 
-  const projectCards = document.querySelectorAll('.project-card');
+const projectCards = document.querySelectorAll('.project-card');
   projectCards.forEach(card => {
     card.addEventListener('mouseover', () => {
       card.style.transform = 'scale(1.05)';
@@ -28,20 +28,20 @@ const typed = new Typed('.home-content h3 span', {
   });
 
 const servicesHeading = new Typed('#services-heading', {
-    strings: ['Services', 'Skills'],
+    strings: ['Skills', 'Interests'],
     typeSpeed: 100,
     backSpeed: 50,
     loop: true
   });
   
-  const educationCards = document.querySelectorAll('.education-card');
+const educationCards = document.querySelectorAll('.education-card');
 
 educationCards.forEach(card => {
   card.addEventListener('mouseover', () => {
     educationCards.forEach(c => {
       if (c !== card) {
         c.style.filter = 'blur(3px)';
-        c.style.transform = 'scale(0.95)';
+        c.style.transform = 'scale(1)';
       }
     });
     card.style.filter = 'blur(0)';
@@ -60,17 +60,6 @@ const minimizeBtn = document.getElementById('minimize-btn');
 const fullscreenBtn = document.getElementById('fullscreen-btn');
 const closeFullscreenBtn = document.getElementById('close-fullscreen-btn');
 const chatContainer = document.getElementById('chat-container');
-
-function toggleMinimize() {
-  chatBubble.classList.toggle('minimized');
-  minimizeBtn.textContent = chatBubble.classList.contains('minimized') ? '+' : '-';
-}
-
-function toggleFullscreen() {
-  chatBubble.classList.toggle('fullscreen');
-  fullscreenBtn.style.display = chatBubble.classList.contains('fullscreen') ? 'none' : 'inline';
-  closeFullscreenBtn.style.display = chatBubble.classList.contains('fullscreen') ? 'inline' : 'none';
-}
 
 minimizeBtn.addEventListener('click', toggleMinimize);
 fullscreenBtn.addEventListener('click', toggleFullscreen);
