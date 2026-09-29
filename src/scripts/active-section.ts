@@ -370,7 +370,10 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 paintProgress();
 
-/* ---------- Marquee rows: drift, slow down on hover, drag, and pause ---------- */
+/* ---------- Marquee rows: drift, slow down on hover, drag, and pause ----------
+ * The browser runs each row as a Web Animation, so no script touches the page on every frame; that keeps
+ * cross-page view transitions intact. The script only changes the playback rate or scrubs the time.
+ */
 
 interface MarqueeRow {
   root: HTMLElement;
@@ -379,16 +382,14 @@ interface MarqueeRow {
   group: string;
   direction: number;
   speed: number;
-  current: number;
-  x: number;
   loop: number;
+  animation: Animation | null;
+  ramp: number;
   lastPointerX: number;
   hover: boolean;
   dragging: boolean;
-  visible: boolean;
 }
 
-const wrap = (value: number, loop: number) => (loop > 0 ? ((value % loop) - loop) % loop : 0);
 const pausedGroups = new Set<string>();
 const marqueeRows: MarqueeRow[] = [];
 for (const root of Array.from(document.querySelectorAll<HTMLElement>('[data-marquee]'))) {
@@ -400,17 +401,33 @@ for (const root of Array.from(document.querySelectorAll<HTMLElement>('[data-marq
     group: root.dataset.marqueeGroup ?? '',
     direction: root.dataset.reverse ? 1 : -1,
     speed: Number(root.dataset.speed ?? 32),
-    current: 0, x: 0, loop: 0, lastPointerX: 0,
-    hover: false, dragging: false, visible: false,
+    loop: 0, animation: null, ramp: 0, lastPointerX: 0,
+    hover: false, dragging: false,
   });
 }
 
-const paintRow = (row: MarqueeRow) => {
-  row.track.style.transform = 'translate3d(' + row.x.toFixed(2) + 'px, 0, 0)';
+const targetRate = (row: MarqueeRow) => (pausedGroups.has(row.group) || row.dragging ? 0 : row.hover ? 0.2 : 1);
+
+// Ease the playback rate toward its target so hover and pause feel soft rather than abrupt.
+const rampRow = (row: MarqueeRow) => {
+  const animation = row.animation;
+  if (!animation) return;
+  cancelAnimationFrame(row.ramp);
+  const from = animation.playbackRate;
+  const to = targetRate(row);
+  const began = performance.now();
+  const step = (now: number) => {
+    const progress = Math.min(1, (now - began) / 400);
+    animation.updatePlaybackRate(from + (to - from) * (1 - Math.pow(1 - progress, 3)));
+    if (progress < 1) row.ramp = requestAnimationFrame(step);
+  };
+  row.ramp = requestAnimationFrame(step);
 };
 
-// Clone the list until the track covers the row plus one full loop, so the wrap is seamless.
-const fillRow = (row: MarqueeRow) => {
+// Clone the list until the track covers the row plus one loop, then run one seamless loop forever.
+const buildRow = (row: MarqueeRow) => {
+  const fraction = row.animation && row.loop ? ((Number(row.animation.currentTime) || 0) % (row.loop / row.speed * 1000)) / (row.loop / row.speed * 1000) : 0;
+  row.animation?.cancel();
   row.track.querySelectorAll('[data-clone]').forEach((clone) => clone.remove());
   const gap = parseFloat(getComputedStyle(row.track).columnGap) || 0;
   row.loop = row.list.getBoundingClientRect().width + gap;
@@ -422,33 +439,17 @@ const fillRow = (row: MarqueeRow) => {
     clone.dataset.clone = '';
     row.track.append(clone);
   }
-  row.x = wrap(row.x, row.loop);
-  paintRow(row);
+  const [from, to] = row.direction < 0 ? [0, -row.loop] : [-row.loop, 0];
+  const duration = row.loop / row.speed * 1000;
+  row.animation = row.track.animate(
+    [{ transform: 'translate3d(' + from + 'px, 0, 0)' }, { transform: 'translate3d(' + to + 'px, 0, 0)' }],
+    { duration, iterations: Infinity },
+  );
+  row.animation.currentTime = fraction * duration;
+  row.animation.playbackRate = targetRate(row);
 };
 
-let marqueeFrame = 0;
-let marqueeLast = 0;
-const tickMarquee = (now: number) => {
-  const dt = marqueeLast ? Math.min(0.05, (now - marqueeLast) / 1000) : 0;
-  marqueeLast = now;
-  let moving = false;
-  for (const row of marqueeRows) {
-    if (!row.visible || row.loop === 0) continue;
-    const target = pausedGroups.has(row.group) || row.dragging ? 0 : row.speed * (row.hover ? 0.2 : 1);
-    row.current += (target - row.current) * Math.min(1, dt * 4);
-    if (Math.abs(row.current) < 0.05 && target === 0) row.current = 0;
-    if (!row.dragging) row.x = wrap(row.x + row.direction * row.current * dt, row.loop);
-    paintRow(row);
-    if (row.current !== 0 || target !== 0 || row.dragging) moving = true;
-  }
-  marqueeFrame = moving ? requestAnimationFrame(tickMarquee) : 0;
-  if (!moving) marqueeLast = 0;
-};
-const wakeMarquee = () => {
-  if (!marqueeFrame) marqueeFrame = requestAnimationFrame(tickMarquee);
-};
-
-if (marqueeRows.length > 0) {
+if (marqueeRows.length > 0 && 'animate' in Element.prototype) {
   document.documentElement.classList.add('has-marquee');
   for (const button of Array.from(document.querySelectorAll<HTMLButtonElement>('[data-marquee-toggle]'))) {
     const group = button.dataset.marqueeToggle ?? '';
@@ -460,69 +461,65 @@ if (marqueeRows.length > 0) {
       if (pausedGroups.has(group)) pausedGroups.delete(group);
       else pausedGroups.add(group);
       sync();
-      wakeMarquee();
+      marqueeRows.filter((row) => row.group === group).forEach(rampRow);
     });
   }
 
-  const visibility = 'IntersectionObserver' in window
-    ? new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        const row = marqueeRows.find((candidate) => candidate.root === entry.target);
-        if (row) row.visible = entry.isIntersecting;
-      }
-      wakeMarquee();
-    })
-    : null;
-
   for (const row of marqueeRows) {
-    fillRow(row);
-    if (visibility) visibility.observe(row.root);
-    else row.visible = true;
+    buildRow(row);
     row.root.addEventListener('pointerenter', (event) => {
       if (event.pointerType !== 'mouse') return;
       row.hover = true;
-      wakeMarquee();
+      rampRow(row);
     });
     row.root.addEventListener('pointerleave', () => {
       row.hover = false;
-      wakeMarquee();
+      rampRow(row);
     });
     row.root.addEventListener('pointerdown', (event) => {
-      if (event.button !== 0) return;
+      if (event.button !== 0 || !row.animation) return;
       row.dragging = true;
       row.lastPointerX = event.clientX;
+      cancelAnimationFrame(row.ramp);
+      row.animation.updatePlaybackRate(0);
       row.root.setPointerCapture(event.pointerId);
       row.root.classList.add('is-dragging');
-      wakeMarquee();
     });
     row.root.addEventListener('pointermove', (event) => {
-      if (!row.dragging) return;
-      row.x = wrap(row.x + event.clientX - row.lastPointerX, row.loop);
+      if (!row.dragging || !row.animation || row.loop === 0) return;
+      const duration = row.loop / row.speed * 1000;
+      const moved = event.clientX - row.lastPointerX;
       row.lastPointerX = event.clientX;
-      paintRow(row);
+      const time = (Number(row.animation.currentTime) || 0) + row.direction * moved / row.loop * duration;
+      row.animation.currentTime = ((time % duration) + duration) % duration;
     });
     const endDrag = (event: PointerEvent) => {
       if (!row.dragging) return;
       row.dragging = false;
       row.root.classList.remove('is-dragging');
       if (row.root.hasPointerCapture(event.pointerId)) row.root.releasePointerCapture(event.pointerId);
-      wakeMarquee();
+      rampRow(row);
     };
     row.root.addEventListener('pointerup', endDrag);
     row.root.addEventListener('pointercancel', endDrag);
   }
 
   if ('ResizeObserver' in window) {
+    const widths = new Map<Element, number>();
     const resize = new ResizeObserver((entries) => {
       for (const entry of entries) {
+        const width = Math.round(entry.contentRect.width);
+        if (widths.get(entry.target) === width) continue;
+        widths.set(entry.target, width);
         const row = marqueeRows.find((candidate) => candidate.root === entry.target);
-        if (row) fillRow(row);
+        if (row) buildRow(row);
       }
     });
     marqueeRows.forEach((row) => resize.observe(row.root));
   }
-  void document.fonts?.ready.then(() => marqueeRows.forEach(fillRow));
-  wakeMarquee();
+  void document.fonts?.ready.then(() => marqueeRows.forEach(buildRow));
+  // Hold the rows still while the browser captures the page for a cross-page transition.
+  window.addEventListener('pageswap', () => marqueeRows.forEach((row) => row.animation?.pause()));
 }
 
 /* ---------- Floating contact pill: shown between the hero and the contact section ---------- */

@@ -38,6 +38,8 @@ export interface CaseStudy {
   status?: string;
   current?: boolean;
   result?: string;
+  /** When the result was announced, if later than the event itself. */
+  announced?: string;
   role?: string;
   domains: string[];
   image?: CaseImage;
@@ -55,7 +57,10 @@ export interface CaseStudy {
 export const person = {
   name: 'Wisit Suwannao',
   nickname: 'Pluem',
+  nicknameThai: 'ปลื้ม',
   email: 'wisit.p.2005@gmail.com',
+  /** Public CV on Google Drive, behind a short link the owner maintains. */
+  cv: 'https://kmutt.me/WisitSuwannao-CV',
   siteUrl: 'https://palapluem.github.io/Wisit-s-Portfolio/',
 };
 
@@ -79,6 +84,7 @@ const constitutionsPresentation = 'https://github.com/Palapluem/cpe232-datamodel
 
 const aiat: Org = { name: 'Artificial Intelligence Association of Thailand', href: 'https://aiat.or.th/', logo: 'logos/aiat.webp' };
 
+// Projects first, then competitions from the newest result to the oldest.
 export const caseStudies: CaseStudy[] = [
   {
     slug: 'thai-public-data-platform',
@@ -168,40 +174,6 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
-    slug: 'coffee-chain-demand-forecasting',
-    kind: 'competition',
-    title: 'Coffee Chain Demand Forecasting',
-    type: 'Hackathon',
-    year: '2026',
-    dates: '12 - 15 May 2026',
-    context: 'Super AI Engineer Season 6, Level 2',
-    summary: 'A winning forecast built from multi-store transaction history and operational signals.',
-    result: 'Winner',
-    domains: ['Forecasting', 'Data science'],
-    image: {
-      src: 'images/coffee-chain-winning-team.jpg',
-      alt: 'Super AI Engineer Season 6 team holding the Coffee Chain Hackathon winner board',
-      width: 2048,
-      height: 1365,
-      position: 'center 40%',
-    },
-    facts: [
-      { value: '2,858,050', label: 'transactions' },
-      { value: '1,376,133', label: 'orders' },
-      { value: '20', label: 'stores' },
-      { value: '7', label: 'categories' },
-      { value: '670', label: 'days' },
-    ],
-    highlights: [
-      { label: 'Evaluation', text: '1-day, 7-day, and monthly forecast horizons, scored with MAE.' },
-      { label: 'Signals', text: 'Seasonality, promotions, holidays and paydays, rainfall, stockouts, local events, and store capacity.' },
-      { label: 'Features', text: 'Leakage-aware lag, rolling, calendar, and interaction features.' },
-    ],
-    stack: ['Time-series analysis', 'Feature engineering', 'MAE evaluation', 'Leakage-aware features'],
-    organisers: [aiat],
-    wide: true,
-  },
-  {
     slug: 'gemmaclip',
     kind: 'competition',
     title: 'GemmaClip',
@@ -211,6 +183,7 @@ export const caseStudies: CaseStudy[] = [
     context: 'AMD Developer Hackathon: ACT II, team KMUTT Ma Laew',
     summary: 'Evidence-first video captioning from team KMUTT Ma Laew, where I worked as AI Engineer.',
     result: 'Google DeepMind Gemma Prize, Track 2',
+    announced: '14 Sep 2026',
     role: 'AI Engineer',
     domains: ['Multimodal AI'],
     image: {
@@ -272,6 +245,40 @@ export const caseStudies: CaseStudy[] = [
     organisers: [aiat],
   },
   {
+    slug: 'coffee-chain-demand-forecasting',
+    kind: 'competition',
+    title: 'Coffee Chain Demand Forecasting',
+    type: 'Hackathon',
+    year: '2026',
+    dates: '12 - 15 May 2026',
+    context: 'Super AI Engineer Season 6, Level 2',
+    summary: 'A winning forecast built from multi-store transaction history and operational signals.',
+    result: 'Winner',
+    domains: ['Forecasting', 'Data science'],
+    image: {
+      src: 'images/coffee-chain-winning-team.jpg',
+      alt: 'Super AI Engineer Season 6 team holding the Coffee Chain Hackathon winner board',
+      width: 2048,
+      height: 1365,
+      position: 'center 40%',
+    },
+    facts: [
+      { value: '2,858,050', label: 'transactions' },
+      { value: '1,376,133', label: 'orders' },
+      { value: '20', label: 'stores' },
+      { value: '7', label: 'categories' },
+      { value: '670', label: 'days' },
+    ],
+    highlights: [
+      { label: 'Evaluation', text: '1-day, 7-day, and monthly forecast horizons, scored with MAE.' },
+      { label: 'Signals', text: 'Seasonality, promotions, holidays and paydays, rainfall, stockouts, local events, and store capacity.' },
+      { label: 'Features', text: 'Leakage-aware lag, rolling, calendar, and interaction features.' },
+    ],
+    stack: ['Time-series analysis', 'Feature engineering', 'MAE evaluation', 'Leakage-aware features'],
+    organisers: [aiat],
+    wide: true,
+  },
+  {
     slug: 'promoautomate',
     kind: 'competition',
     title: 'PromoAutomate',
@@ -331,10 +338,11 @@ export const caseStudies: CaseStudy[] = [
 export const projects = caseStudies.filter((item) => item.kind === 'project');
 export const competitions = caseStudies.filter((item) => item.kind === 'competition');
 
+/** Newest result first. The Gemma Prize was announced on 14 Sep 2026, after the July hackathon. */
 export const highlightResults = [
-  { slug: 'super-ai-engineer-season-6', title: 'AI Engineer Award', context: 'Super AI Engineer Season 6, Level 3' },
-  { slug: 'coffee-chain-demand-forecasting', title: 'Winner, Coffee Chain Hackathon', context: 'Super AI Engineer Season 6, Level 2' },
-  { slug: 'gemmaclip', title: 'Gemma Prize, Track 2', context: 'AMD Developer Hackathon: ACT II' },
+  { slug: 'gemmaclip', title: 'Gemma Prize, Track 2', context: 'AMD Developer Hackathon: ACT II', date: 'Sep 2026' },
+  { slug: 'super-ai-engineer-season-6', title: 'AI Engineer Award', context: 'Super AI Engineer Season 6, Level 3', date: 'Sep 2026' },
+  { slug: 'coffee-chain-demand-forecasting', title: 'Winner, Coffee Chain Hackathon', context: 'Super AI Engineer Season 6, Level 2', date: 'May 2026' },
 ];
 
 export const workNumbers = [

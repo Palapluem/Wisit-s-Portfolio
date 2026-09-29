@@ -45,12 +45,26 @@ const oneput = { name: 'Oneput Technology Company Limited', href: 'https://onepu
         <span class="guides__ring guides__ring--b"></span>
       </div>
       <div class="hero__copy">
-        <p class="availability enter" style="--i: 0"><span class="availability__dot" aria-hidden="true"></span>Open to AI engineering and data science internships</p>
+        <div class="intro enter" style="--i: 0">
+          {linkedin ? (
+            <a class="intro__photo" href={linkedin.href} target="_blank" rel="noreferrer" aria-label="Wisit Suwannao on LinkedIn">
+              <img src={base + 'images/wisit-linkedin.webp'} alt="" width="200" height="200" decoding="async" />
+              <span class="intro__badge" aria-hidden="true"><Icon name="linkedin-logo" /></span>
+            </a>
+          ) : (
+            <span class="intro__photo"><img src={base + 'images/wisit-linkedin.webp'} alt="" width="200" height="200" decoding="async" /></span>
+          )}
+          <div class="intro__text">
+            <p class="intro__hi">Hi, I’m {person.nickname} (<span lang="th">{person.nicknameThai}</span>)</p>
+            <p class="intro__status"><span class="availability__dot" aria-hidden="true"></span>Open to AI engineering and data science internships</p>
+          </div>
+        </div>
         <h1 class="hero__title" id="hero-title"><span class="line"><span class="line__inner" style="--i: 1">Wisit</span></span> <span class="line"><span class="line__inner" style="--i: 2">Suwannao</span></span></h1>
         <p class="hero__lede enter" style="--i: 2">Computer Engineering student at KMUTT, building applied AI products and reproducible data pipelines.</p>
         <div class="hero__actions enter" style="--i: 3">
           <a class="button button--primary" href={'mailto:' + person.email}><Icon name="envelope-simple" />Email me</a>
           <a class="button button--quiet" href="#projects">See the work<Icon name="arrow-right" /></a>
+          <a class="button button--quiet" href={person.cv} target="_blank" rel="noreferrer"><Icon name="file-text" />View CV<span class="sr-only"> (opens Google Drive)</span></a>
         </div>
       </div>
       <div class="hero__visual enter" style="--i: 2" data-tilt>
@@ -58,19 +72,13 @@ const oneput = { name: 'Oneput Technology Company Limited', href: 'https://onepu
           <img class="collage__photo collage__photo--back" src={base + 'images/coffee-chain-winning-team.jpg'} srcset={srcsetFor(base, 'images/coffee-chain-winning-team.jpg')} sizes="(min-width: 64rem) 26rem, 80vw" alt="The Coffee Chain Demand Forecasting Hackathon winning team at Super AI Engineer Season 6" width="2048" height="1365" decoding="async" />
           <img class="collage__photo collage__photo--front" src={base + 'images/wisit-profile.jpg'} srcset={srcsetFor(base, 'images/wisit-profile.jpg')} sizes="(min-width: 64rem) 17rem, 52vw" alt="Portrait of Wisit Suwannao" width="450" height="600" fetchpriority="high" />
         </figure>
-        {linkedin && (
-          <a class="hello" href={linkedin.href} target="_blank" rel="noreferrer">
-            <img src={base + 'images/wisit-linkedin.webp'} alt="" width="200" height="200" decoding="async" />
-            <span class="hello__text"><strong>Hi, I’m Pluem</strong><small><Icon name="linkedin-logo" />LinkedIn profile</small></span>
-          </a>
-        )}
         <div class="ledger">
           <p class="ledger__label">Recent results</p>
           <ul class="ledger__list">
             {highlightResults.map((result) => (
               <li>
                 <a href={caseHref(base, result.slug)}>
-                  <span class="ledger__title">{result.title}</span>
+                  <span class="ledger__top"><span class="ledger__title">{result.title}</span><span class="ledger__date">{result.date}</span></span>
                   <span class="ledger__context">{result.context}</span>
                 </a>
               </li>
@@ -119,7 +127,7 @@ const oneput = { name: 'Oneput Technology Company Limited', href: 'https://onepu
       <div class="shell about">
         <div class="about__main">
           <h2 class="section-title" id="about-title">About</h2>
-          <p class="about__lead">I’m Wisit Suwannao (<span lang="th">วิศิษฐ์ สุวรรณเนาว์</span>), or Pluem, a Computer Engineering student at King Mongkut’s University of Technology Thonburi.</p>
+          <p class="about__lead">I’m Wisit Suwannao (<span lang="th">วิศิษฐ์ สุวรรณเนาว์</span>), or Pluem (<span lang="th">ปลื้ม</span>), a Computer Engineering student at King Mongkut’s University of Technology Thonburi.</p>
           <p>My experience spans AI engineering internships, applied machine-learning programmes, and collaborative product competitions.</p>
           <p>I like the full problem-solving loop: understand the source data, make a method measurable, then turn the result into a product or API with clear evidence, sensible safeguards, and tests.</p>
           <a class="now beam" href={caseHref(base, 'thai-public-data-platform')}>
@@ -381,6 +389,7 @@ const oneput = { name: 'Oneput Technology Company Limited', href: 'https://onepu
               <span data-copy-icon="done" hidden><Icon name="check" /></span>
               <span data-copy-label>Copy</span>
             </button>
+            <a class="button button--quiet cv-button" href={person.cv} target="_blank" rel="noreferrer"><Icon name="file-text" />View CV<span class="sr-only"> (opens Google Drive)</span></a>
           </div>
           <ul class="channels">
             {socialLinks.map((social) => (

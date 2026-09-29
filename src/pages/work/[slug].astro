@@ -83,6 +83,7 @@ const position = study.image?.position ? '; object-position: ' + study.image.pos
           <div><dt>Type</dt><dd>{study.type}</dd></div>
           <div><dt>Context</dt><dd>{study.context}</dd></div>
           {study.result && <div><dt>Result</dt><dd class="case__meta-result">{study.result}</dd></div>}
+          {study.announced && <div><dt>Announced</dt><dd>{study.announced}</dd></div>}
           {study.organisers && (
             <div>
               <dt>{study.kind === 'project' ? 'With' : 'Organised by'}</dt>
