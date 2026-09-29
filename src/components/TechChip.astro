@@ -1,0 +1,19 @@
+---
+// Technology chip; shows the official Simple Icons mark (CC0) when one exists for the label.
+import { techIcons } from '../data/portfolio';
+
+const marks = import.meta.glob<string>('../assets/tech/*.svg', { query: '?raw', import: 'default', eager: true });
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+const slug = techIcons[label];
+const raw = slug ? marks[`../assets/tech/${slug}.svg`] : undefined;
+const svg = raw
+  ?.replace(/<title>[^<]*<\/title>/, '')
+  .replace('<svg ', '<svg class="chip__icon" aria-hidden="true" focusable="false" fill="currentColor" ');
+---
+
+<li class="chip">{svg && <Fragment set:html={svg} />}{label}</li>

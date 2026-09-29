@@ -1,0 +1,24 @@
+---
+// Organisation mark: the official logo on a light plate, a Simple Icons mark, or nothing when no official logo is available.
+import type { Org } from '../data/portfolio';
+
+const marks = import.meta.glob<string>('../assets/tech/*.svg', { query: '?raw', import: 'default', eager: true });
+
+interface Props {
+  org: Org;
+  size?: 'sm' | 'md';
+}
+
+const { org, size = 'md' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const raw = org.icon ? marks[`../assets/tech/${org.icon}.svg`] : undefined;
+const svg = raw
+  ?.replace(/<title>[^<]*<\/title>/, '')
+  .replace('<svg ', '<svg aria-hidden="true" focusable="false" fill="currentColor" ');
+---
+
+{(org.logo || svg) && (
+  <span class:list={['org-mark', 'org-mark--' + size, svg && 'org-mark--icon', org.wordmark && 'org-mark--wordmark']}>
+    {org.logo ? <img src={base + org.logo} alt="" width="40" height="40" loading="lazy" decoding="async" /> : <Fragment set:html={svg} />}
+  </span>
+)}

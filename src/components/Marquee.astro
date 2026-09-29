@@ -1,0 +1,21 @@
+---
+// Endless row that drifts sideways, slows on hover, and can be dragged. The script clones the list to fill the
+// loop; without JavaScript the single list scrolls horizontally instead.
+interface Props {
+  label: string;
+  /** Pixels per second. */
+  speed?: number;
+  reverse?: boolean;
+  /** Rows in one group share a pause button. */
+  group?: string;
+  class?: string;
+}
+
+const { label, speed = 32, reverse = false, group, class: className } = Astro.props;
+---
+
+<div class:list={['marquee', className]} data-marquee data-speed={speed} data-reverse={reverse ? 'true' : undefined} data-marquee-group={group} role="group" aria-label={label}>
+  <div class="marquee__track" data-marquee-track>
+    <ul class="marquee__list" role="list"><slot /></ul>
+  </div>
+</div>

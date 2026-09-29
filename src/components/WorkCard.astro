@@ -1,0 +1,51 @@
+---
+import Icon from './Icon.astro';
+import { caseHref, srcsetFor, type CaseStudy } from '../data/portfolio';
+
+interface Props {
+  study: CaseStudy;
+  index?: number;
+}
+
+const { study, index = 0 } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const href = caseHref(base, study.slug);
+---
+
+<article class="work-card spot" data-reveal style={'--i: ' + index}>
+  <div class="work-card__top">
+    <ul class="domain-tags" aria-label="Domains">
+      {study.domains.map((domain) => <li>{domain}</li>)}
+    </ul>
+    <span class="round-arrow" aria-hidden="true"><Icon name="arrow-up-right" /></span>
+  </div>
+  <h3 class="work-card__title">
+    <a class="stretched-link" href={href} style={'view-transition-name: case-title-' + study.slug + '; view-transition-class: case-title'}>{study.title}</a>
+  </h3>
+  <p class="work-card__meta">
+    {study.status && <span class:list={['status', study.current && 'status--live']}>{study.status}</span>}
+    <span class="meta-line">{study.dates}</span>
+    <span class="meta-line">{study.context}</span>
+  </p>
+  {study.image && (
+    <figure class="work-card__media">
+      <img
+        src={base + study.image.src}
+        srcset={srcsetFor(base, study.image.src)}
+        sizes="(min-width: 76rem) 36rem, (min-width: 48rem) 46vw, 92vw"
+        alt={study.image.alt}
+        width={study.image.width}
+        height={study.image.height}
+        loading="lazy"
+        decoding="async"
+        style={'view-transition-name: case-media-' + study.slug + '; view-transition-class: case-media' + (study.image.position ? '; object-position: ' + study.image.position : '')}
+      />
+    </figure>
+  )}
+  <p class="work-card__summary">{study.summary}</p>
+  {study.facts && (
+    <dl class="facts-inline">
+      {study.facts.map((fact) => <div><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
+    </dl>
+  )}
+</article>

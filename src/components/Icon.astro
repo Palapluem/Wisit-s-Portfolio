@@ -1,0 +1,16 @@
+---
+// Phosphor Icons (regular weight, MIT), vendored in src/assets/icons.
+const icons = import.meta.glob<string>('../assets/icons/*.svg', { query: '?raw', import: 'default', eager: true });
+
+interface Props {
+  name: string;
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+const source = icons[`../assets/icons/${name}.svg`];
+if (!source) throw new Error(`Unknown icon: ${name}`);
+const svg = source.replace('<svg ', `<svg class="${['icon', className].filter(Boolean).join(' ')}" aria-hidden="true" focusable="false" `);
+---
+
+<Fragment set:html={svg} />

@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+import { navItems, person } from '../data/portfolio';
+
+interface Props {
+  home?: boolean;
+}
+
+const { home = true } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const target = (id: string) => (home ? '#' + id : base + '#' + id);
+---
+
+<header class="site-nav" data-nav>
+  <nav class="pill" aria-label="Primary">
+    <a class="pill__brand" href={home ? '#top' : base} aria-label={home ? 'Wisit Suwannao, back to top' : 'Wisit Suwannao, home'}>
+      <img class="pill__avatar" src={base + 'images/wisit-linkedin.webp'} alt="" width="36" height="36" decoding="async" />
+      <span class="pill__name">Wisit Suwannao</span>
+    </a>
+    <span class="pill__indicator" aria-hidden="true"></span>
+    <ul class="pill__links" id="primary-nav">
+      {navItems.map((item) => (
+        <li><a class="pill__link" href={target(item.id)} data-spy={home ? item.id : undefined}>{item.label}</a></li>
+      ))}
+    </ul>
+    <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Dark theme" title="Switch theme" data-theme-toggle>
+      <span class="theme-toggle__track" aria-hidden="true"><Icon name="sun" /><Icon name="moon" /></span>
+      <span class="theme-toggle__knob" aria-hidden="true"><Icon name="sun" class="theme-toggle__sun" /><Icon name="moon" class="theme-toggle__moon" /></span>
+    </button>
+    <a class="button button--primary pill__cta" href={'mailto:' + person.email}><Icon name="envelope-simple" />Email me</a>
+    <button class="pill__menu" id="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav">
+      <Icon name="list" class="pill__menu-open" /><Icon name="x" class="pill__menu-close" /><span class="pill__menu-label" data-menu-label>Menu</span>
+    </button>
+  </nav>
+</header>

@@ -1,0 +1,69 @@
+---
+// Competition gallery: image-led tiles that open their case pages, with a type filter.
+import Icon from './Icon.astro';
+import { caseHref, smallestImage, srcsetFor, type CaseStudy, type Point } from '../data/portfolio';
+
+interface Props {
+  stories: CaseStudy[];
+  label: string;
+}
+
+const { stories, label } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const isTrack = (points: Point[]) => points.every((point) => point.label);
+const types = Array.from(new Set(stories.map((story) => story.type)));
+const plural = (type: string) => (type.endsWith('s') ? type : type + 's');
+---
+
+<div class="filters" role="group" aria-label="Filter competitions by type" data-filters>
+  <button class="filter" type="button" aria-pressed="true" data-filter="all">All<span>{stories.length}</span></button>
+  {types.map((type) => (
+    <button class="filter" type="button" aria-pressed="false" data-filter={type}>
+      {plural(type)}<span>{stories.filter((story) => story.type === type).length}</span>
+    </button>
+  ))}
+</div>
+<p class="sr-only" aria-live="polite" data-filter-status></p>
+
+<ul class="gallery" role="list" aria-label={label} data-gallery>
+  {stories.map((story, index) => (
+    <li
+      class:list={['tile', 'spot', story.wide && 'tile--wide tile--overlay', !story.image && 'tile--text']}
+      style={'--i: ' + index}
+      data-type={story.type}
+    >
+      {story.image ? (
+        <div class:list={['tile__media', story.image.fit === 'contain' && 'tile__media--contain']} style={story.image.fit === 'contain' ? "--media: url('" + smallestImage(base, story.image.src) + "')" : undefined}>
+          <img
+            src={base + story.image.src}
+            srcset={srcsetFor(base, story.image.src)}
+            sizes={story.image.fit === 'contain' ? '(min-width: 40rem) 20rem, 60vw' : story.wide ? '(min-width: 76rem) 76rem, 92vw' : '(min-width: 76rem) 37rem, (min-width: 40rem) 46vw, 92vw'}
+            alt={story.image.alt}
+            width={story.image.width}
+            height={story.image.height}
+            loading="lazy"
+            decoding="async"
+            style={'view-transition-name: case-media-' + story.slug + '; view-transition-class: case-media' + (story.image.position ? '; object-position: ' + story.image.position : '')}
+          />
+          {story.result && <span class="tile__badge">{story.result}</span>}
+        </div>
+      ) : story.visual && (
+        <div class="tile__visual">
+          <p class="tile__code" aria-hidden="true">{story.visual.codeLabel && <small>{story.visual.codeLabel}</small>}{story.visual.code}</p>
+          <ul class:list={['points', isTrack(story.visual.points) ? 'points--track' : 'points--chips']}>
+            {story.visual.points.map((point) => <li>{point.label && <span>{point.label}</span>}<strong>{point.text}</strong></li>)}
+          </ul>
+        </div>
+      )}
+      <div class="tile__caption">
+        <p class="tile__meta">{story.year} · {story.type}</p>
+        <h3 class="tile__title">
+          <a class="stretched-link" href={caseHref(base, story.slug)} style={'view-transition-name: case-title-' + story.slug + '; view-transition-class: case-title'}>{story.title}</a>
+        </h3>
+        {!story.image && story.result && <p class="tile__result">{story.result}</p>}
+        <p class="tile__context">{story.context}</p>
+        <span class="tile__cta" aria-hidden="true">View case<Icon name="arrow-right" /></span>
+      </div>
+    </li>
+  ))}
+</ul>

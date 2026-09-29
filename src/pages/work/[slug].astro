@@ -1,0 +1,177 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import OrgMark from '../../components/OrgMark.astro';
+import TechChip from '../../components/TechChip.astro';
+import { caseHref, caseStudies, smallestImage, srcsetFor, type CaseStudy } from '../../data/portfolio';
+
+export function getStaticPaths() {
+  return caseStudies.map((study, index) => ({
+    params: { slug: study.slug },
+    props: {
+      study,
+      previous: caseStudies[index - 1] ?? null,
+      next: caseStudies[index + 1] ?? null,
+    },
+  }));
+}
+
+interface Props {
+  study: CaseStudy;
+  previous: CaseStudy | null;
+  next: CaseStudy | null;
+}
+
+const { study, previous, next } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const backHref = base + (study.kind === 'project' ? '#projects' : '#achievements');
+const backLabel = study.kind === 'project' ? 'All selected work' : 'All competitions';
+const position = study.image?.position ? '; object-position: ' + study.image.position : '';
+---
+
+<Base
+  title={study.title + ' | Wisit Suwannao'}
+  description={study.summary}
+  path={'work/' + study.slug + '/'}
+  image={study.image?.src}
+  home={false}
+>
+  <main id="main" class="case" tabindex="-1">
+    <div class="shell">
+      <a class="back-link" href={backHref}><Icon name="arrow-right" class="back-link__icon" />{backLabel}</a>
+
+      <header class="case__head">
+        <ul class="case__chips" aria-label="Type and dates">
+          <li>{study.type}</li>
+          <li>{study.dates}</li>
+          {study.status && <li class:list={['status', study.current && 'status--live']}>{study.status}</li>}
+        </ul>
+        <h1 class="case__title" style={'view-transition-name: case-title-' + study.slug + '; view-transition-class: case-title'}>{study.title}</h1>
+        <p class="case__context">{study.context}</p>
+        {study.result && <p class="case__result"><Icon name="trophy" />{study.result}</p>}
+        <p class="case__summary">{study.summary}</p>
+      </header>
+    </div>
+
+    {study.image ? (
+      <figure class:list={['case__hero', study.image.fit === 'contain' && 'case__hero--contain']} style={study.image.fit === 'contain' ? "--media: url('" + smallestImage(base, study.image.src) + "')" : undefined}>
+        <img
+          src={base + study.image.src}
+          srcset={srcsetFor(base, study.image.src)}
+          sizes={study.image.fit === 'contain' ? '(min-width: 64rem) 40rem, 90vw' : '(min-width: 76rem) 76rem, 94vw'}
+          alt={study.image.alt}
+          width={study.image.width}
+          height={study.image.height}
+          fetchpriority="high"
+          style={'view-transition-name: case-media-' + study.slug + '; view-transition-class: case-media' + position}
+        />
+      </figure>
+    ) : study.visual && (
+      <div class="shell">
+        <div class="case__band" aria-hidden="true">
+          {study.visual.codeLabel && <small>{study.visual.codeLabel}</small>}
+          <span>{study.visual.code}</span>
+        </div>
+      </div>
+    )}
+
+    <div class="shell case__body">
+      <aside class="case__aside" aria-label="Case details">
+        <dl class="case__meta">
+          {study.role && <div><dt>Role</dt><dd>{study.role}</dd></div>}
+          <div><dt>Dates</dt><dd>{study.dates}</dd></div>
+          <div><dt>Type</dt><dd>{study.type}</dd></div>
+          <div><dt>Context</dt><dd>{study.context}</dd></div>
+          {study.result && <div><dt>Result</dt><dd class="case__meta-result">{study.result}</dd></div>}
+          {study.organisers && (
+            <div>
+              <dt>{study.kind === 'project' ? 'With' : 'Organised by'}</dt>
+              <dd>
+                <ul class="orgs">
+                  {study.organisers.map((org) => (
+                    <li>
+                      <OrgMark org={org} size="sm" />
+                      {org.href ? <a href={org.href} target="_blank" rel="noreferrer">{org.name}</a> : <span>{org.name}</span>}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </div>
+          )}
+        </dl>
+        <div class="case__stack">
+          <p class="eyebrow-inline">Stack and methods</p>
+          <ul class="chips">{study.stack.map((item) => <TechChip label={item} />)}</ul>
+        </div>
+        {study.links && study.links.length > 0 && (
+          <ul class="case__links">
+            {study.links.map((link) => (
+              <li><a class="text-link" href={link.href} target="_blank" rel="noreferrer">{link.label}<Icon name="arrow-up-right" /></a></li>
+            ))}
+          </ul>
+        )}
+      </aside>
+
+      <div class="case__main">
+        {study.facts && (
+          <section aria-labelledby="facts-title">
+            <h2 class="case__h2" id="facts-title">Key numbers</h2>
+            <dl class="facts">
+              {study.facts.map((fact) => <div class="spot"><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
+            </dl>
+          </section>
+        )}
+        <section aria-labelledby="highlights-title">
+          <h2 class="case__h2" id="highlights-title">Highlights</h2>
+          <ol class="highlights">
+            {study.highlights.map((point) => (
+              <li class="spot" data-reveal>
+                {point.label && <strong>{point.label}</strong>}
+                <span>{point.text}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+        {study.scopeNote && <p class="case__scope">{study.scopeNote}</p>}
+        {study.evidence && (
+          <section aria-labelledby="evidence-title">
+            <h2 class="case__h2" id="evidence-title">Evidence</h2>
+            <ul class="evidence-grid">
+              {study.evidence.map((item) => (
+                <li class="spot">
+                  {item.href ? (
+                    <a href={item.href} target="_blank" rel="noreferrer">
+                      <img src={base + item.image.src} srcset={srcsetFor(base, item.image.src)} sizes="(min-width: 76rem) 26rem, (min-width: 40rem) 45vw, 92vw" alt={item.image.alt} width={item.image.width} height={item.image.height} loading="lazy" decoding="async" />
+                      <span class="evidence-grid__title">{item.title}<Icon name="arrow-up-right" /></span>
+                      <span class="evidence-grid__caption">{item.caption}</span>
+                    </a>
+                  ) : (
+                    <figure>
+                      <img src={base + item.image.src} srcset={srcsetFor(base, item.image.src)} sizes="(min-width: 76rem) 26rem, (min-width: 40rem) 45vw, 92vw" alt={item.image.alt} width={item.image.width} height={item.image.height} loading="lazy" decoding="async" />
+                      <figcaption><span class="evidence-grid__title">{item.title}</span><span class="evidence-grid__caption">{item.caption}</span></figcaption>
+                    </figure>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    </div>
+
+    <nav class="shell pager" aria-label="More case studies">
+      {previous ? (
+        <a class="pager__link spot" href={caseHref(base, previous.slug)}>
+          <span class="pager__dir">Previous</span>
+          <span class="pager__title">{previous.title}</span>
+        </a>
+      ) : <span></span>}
+      {next ? (
+        <a class="pager__link pager__link--next spot" href={caseHref(base, next.slug)}>
+          <span class="pager__dir">Next</span>
+          <span class="pager__title">{next.title}</span>
+        </a>
+      ) : <span></span>}
+    </nav>
+  </main>
+</Base>
