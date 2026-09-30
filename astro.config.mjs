@@ -1,10 +1,9 @@
 import { defineConfig } from 'astro/config';
 
-const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
-
+// Served from the root of the custom domain, locally and on GitHub Pages alike.
 export default defineConfig({
-  site: 'https://palapluem.github.io',
-  base: isGitHubPages ? '/Wisit-s-Portfolio' : '/',
+  site: 'https://palapluem.dev',
+  base: '/',
   trailingSlash: 'always',
   devToolbar: {
     enabled: false,

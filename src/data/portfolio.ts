@@ -61,7 +61,7 @@ export const person = {
   email: 'wisit.p.2005@gmail.com',
   /** Public CV on Google Drive, behind a short link the owner maintains. */
   cv: 'https://kmutt.me/WisitSuwannao-CV',
-  siteUrl: 'https://palapluem.github.io/Wisit-s-Portfolio/',
+  siteUrl: 'https://palapluem.dev/',
 };
 
 export const socialLinks = [

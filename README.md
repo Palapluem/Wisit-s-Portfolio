@@ -14,7 +14,7 @@ Build and inspect the static output:
     npm run build
     npm run preview
 
-The generated site is in <code>dist/</code>. The GitHub Pages build uses the project path <code>/Wisit-s-Portfolio/</code>; local development uses <code>/</code>.
+The generated site is in <code>dist/</code>. The site is served from the root of its custom domain, so every build uses the base path <code>/</code>.
 
 ## Content structure
 
@@ -57,12 +57,12 @@ The original static portfolio is preserved on the <code>legacy</code> branch. Th
 
 This repository uses <strong>GitHub Pages</strong>. The workflow builds the Astro site and deploys <code>dist/</code> when changes reach <code>main</code>. If a deployment does not start, confirm the repository's Pages publishing source is set to <strong>GitHub Actions</strong>.
 
-Expected project-site URL:
+Live site:
 
-<https://palapluem.github.io/Wisit-s-Portfolio/>
+<https://palapluem.dev/>
 
-An optional custom domain such as <code>palapluem.me</code> must be registered separately (availability and renewal cost depend on the registrar), then configured in GitHub Pages and at the domain's DNS provider. No domain or external hosting settings have been changed.
+The custom domain <code>palapluem.dev</code> is registered at name.com and verified for the Palapluem GitHub account. Its DNS points the apex at GitHub Pages (four A and four AAAA records) and <code>www</code> at <code>palapluem.github.io</code> with a CNAME record. The custom domain is set in the repository's Pages settings, with HTTPS enforced; the old <code>palapluem.github.io/Wisit-s-Portfolio/</code> address redirects to it.
 
 ## Deployment
 
-GitHub Actions builds and publishes the site to GitHub Pages when changes are pushed to <code>main</code>. The previous portfolio is retained in <code>legacy</code> and can be revisited without replacing its history.
+GitHub Actions builds and publishes the site to GitHub Pages when changes are pushed to <code>main</code>. Earlier versions are kept on the <code>legacy</code> (original static site) and <code>legacy-v2</code> (first Astro version) branches.
