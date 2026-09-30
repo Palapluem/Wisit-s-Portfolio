@@ -78,7 +78,8 @@ const oneput = { name: 'Oneput Technology Company Limited', href: 'https://onepu
             {highlightResults.map((result) => (
               <li>
                 <a href={caseHref(base, result.slug)}>
-                  <span class="ledger__top"><span class="ledger__title">{result.title}</span><span class="ledger__date">{result.date}</span></span>
+                  <span class="ledger__date">{result.date}</span>
+                  <span class="ledger__title">{result.title}</span>
                   <span class="ledger__context">{result.context}</span>
                 </a>
               </li>
@@ -361,17 +362,11 @@ const oneput = { name: 'Oneput Technology Company Limited', href: 'https://onepu
             </div>
           </li>
         </ul>
-        <div class="langs">
+        <div class="langs spot">
           <h3 class="langs__title">Languages</h3>
-          <ul class="langs__list">
-            {languages.map((language) => (
-              <li class="lang spot">
-                <span class="lang__hello" lang={language.code} aria-hidden="true">{language.hello}</span>
-                <span class="lang__name">{language.name}</span>
-                <span class="lang__level"><span class="lang__meter" data-level={language.level} aria-hidden="true"><i></i><i></i><i></i></span>{language.levelLabel}</span>
-              </li>
-            ))}
-          </ul>
+          <dl class="langs__list">
+            {languages.map((language) => <div><dt>{language.name}</dt><dd>{language.level}</dd></div>)}
+          </dl>
         </div>
       </div>
     </section>
@@ -389,9 +384,9 @@ const oneput = { name: 'Oneput Technology Company Limited', href: 'https://onepu
               <span data-copy-icon="done" hidden><Icon name="check" /></span>
               <span data-copy-label>Copy</span>
             </button>
-            <a class="button button--quiet cv-button" href={person.cv} target="_blank" rel="noreferrer"><Icon name="file-text" />View CV<span class="sr-only"> (opens Google Drive)</span></a>
           </div>
           <ul class="channels">
+            <li><a href={person.cv} target="_blank" rel="noreferrer"><Icon name="file-text" />CV<small>Google Drive</small></a></li>
             {socialLinks.map((social) => (
               <li><a href={social.href} target="_blank" rel="noreferrer"><Icon name={social.icon} />{social.label}<small>{social.handle}</small></a></li>
             ))}

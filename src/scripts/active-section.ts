@@ -307,7 +307,7 @@ if (finePointer.matches) {
 
   if (!reduceMotion.matches) {
     // Cards lean toward the pointer; bigger cards lean less.
-    const tiltCards = Array.from(document.querySelectorAll<HTMLElement>('.work-card, .tile, .number, .pager__link, .lang, .school, .cred'));
+    const tiltCards = Array.from(document.querySelectorAll<HTMLElement>('.work-card, .tile, .number, .pager__link, .school, .cred'));
     tiltCards.forEach((card) => card.classList.add('tilt'));
     let tilted: HTMLElement | null = null;
     const resetTilt = (card: HTMLElement) => {

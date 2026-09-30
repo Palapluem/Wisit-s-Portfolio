@@ -50,7 +50,7 @@
   --text-display: clamp(2.375rem, 1.6vw + 1.6rem, 3rem);
   --text-md: 1.125rem;
   --text-2xl: clamp(2rem, 1.35rem + 2.2vw, 3rem);
-  --text-hero: clamp(2.875rem, 1.3rem + 4.8vw, 5.25rem);
+  --text-hero: clamp(2.875rem, 1.3rem + 4.8vw, 6.25rem);
   --text-case: clamp(2.5rem, 1.5rem + 3.4vw, 4.25rem);
 
   --space-3xs: 0.125rem;
@@ -64,6 +64,8 @@
   --space-3xl: 6rem;
   --space-4xl: 9rem;
   --page-gutter: clamp(1.25rem, 4vw, 3rem);
+  /* Content width: 76rem, widening to 84rem on large monitors (see global.css). */
+  --shell-max: 76rem;
 
   /* Shape rule: interactive controls are pill, surfaces 12px, inputs and tags 6px. */
   --radius-sm: 6px;

@@ -398,11 +398,10 @@ export const capabilities = [
   },
 ];
 
-/** Spoken languages, each greeted in its own language. */
 export const languages = [
-  { name: 'Thai', code: 'th', hello: 'สวัสดี', level: 3, levelLabel: 'Native' },
-  { name: 'English', code: 'en', hello: 'Hello', level: 2, levelLabel: 'Intermediate' },
-  { name: 'Spanish', code: 'es', hello: 'Hola', level: 1, levelLabel: 'Studying' },
+  { name: 'Thai', level: 'Native' },
+  { name: 'English', level: 'Intermediate' },
+  { name: 'Spanish', level: 'Studying' },
 ];
 
 export const programmingLanguages = ['Python', 'Java', 'C', 'C++', 'SQL', 'Go', 'TypeScript', 'JavaScript'];
