@@ -56,6 +56,7 @@ export interface CaseStudy {
 
 export const person = {
   name: 'Wisit Suwannao',
+  nameThai: 'วิศิษฐ์ สุวรรณเนาว์',
   nickname: 'Pluem',
   nicknameThai: 'ปลื้ม',
   email: 'wisit.p.2005@gmail.com',

@@ -355,6 +355,20 @@ if (finePointer.matches) {
   }
 }
 
+/* ---------- Footer clock: local time in Bangkok ---------- */
+
+const clock = document.querySelector<HTMLTimeElement>('[data-local-time]');
+if (clock) {
+  const format = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+  const tickClock = () => {
+    const now = new Date();
+    clock.textContent = format.format(now) + ' (UTC+7)';
+    clock.dateTime = now.toISOString();
+  };
+  tickClock();
+  window.setInterval(tickClock, 30000);
+}
+
 /* ---------- Scroll progress ---------- */
 
 let progressQueued = false;
