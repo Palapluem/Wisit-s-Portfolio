@@ -400,7 +400,8 @@ for (const root of Array.from(document.querySelectorAll<HTMLElement>('[data-marq
     root, track, list,
     group: root.dataset.marqueeGroup ?? '',
     direction: root.dataset.reverse ? 1 : -1,
-    speed: Number(root.dataset.speed ?? 32),
+    // Rows play for everyone; with reduced motion they drift at half speed. The pause button stops them.
+    speed: Number(root.dataset.speed ?? 32) * (reduceMotion.matches ? 0.5 : 1),
     loop: 0, animation: null, ramp: 0, lastPointerX: 0,
     hover: false, dragging: false,
   });
@@ -453,8 +454,6 @@ if (marqueeRows.length > 0 && 'animate' in Element.prototype) {
   document.documentElement.classList.add('has-marquee');
   for (const button of Array.from(document.querySelectorAll<HTMLButtonElement>('[data-marquee-toggle]'))) {
     const group = button.dataset.marqueeToggle ?? '';
-    // With reduced motion the rows wait until the visitor chooses to play them.
-    if (reduceMotion.matches) pausedGroups.add(group);
     const sync = () => button.setAttribute('aria-pressed', String(pausedGroups.has(group)));
     sync();
     button.addEventListener('click', () => {

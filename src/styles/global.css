@@ -1510,8 +1510,9 @@ a.role__org-name:hover { text-decoration: underline; text-decoration-color: var(
 .theme-switching [style*="view-transition-name"] { view-transition-name: none !important; }
 
 /* ---------- Motion ----------
- * Two tiers. Fades, light, and colour run for everyone. Travel, scale, tilt, drift, pulses, and the self-moving
- * rows only run when the visitor has not asked for reduced motion; the rows then start paused and can be played.
+ * Two tiers. Fades, light, and colour run for everyone. Travel, scale, tilt, drift, and pulses only run when the
+ * visitor has not asked for reduced motion. The logo and tool rows play for everyone (at half speed with reduced
+ * motion) and always have a pause button.
  */
 
 @keyframes fade { from { opacity: 0; } }
